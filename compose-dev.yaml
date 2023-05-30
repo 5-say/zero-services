@@ -8,13 +8,14 @@ services:
       - infinity
     image: golang:1.20.2
     init: true
-    networks:
-      - outside
     volumes:
       - go:/go
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
+    networks:
+      - outside
+      - default
 
   mysql:
     image: mysql:5.7.41
@@ -26,6 +27,8 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
+    networks:
+      - default
 
 volumes:
   go:
