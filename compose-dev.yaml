@@ -1,6 +1,6 @@
 services:
   main:
-    name: zero-services
+    container_name: zero-services
     entrypoint:
       - sleep
       - infinity
@@ -25,4 +25,4 @@ services:
 
 volumes:
   go:
-    name: "go"
+    external: true
