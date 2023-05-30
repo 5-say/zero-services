@@ -35,7 +35,7 @@ func main() {
 	})
 
 	// 设置数据库连接
-	gormdb, _ := gorm.Open(mysql.Open("root:root@(mysql:3306)/demo?charset=utf8mb4&parseTime=True&loc=Local"))
+	gormdb, _ := gorm.Open(mysql.Open("root:root@(mysql:3306)/jwtx?charset=utf8mb4&parseTime=True&loc=Local"))
 	g.UseDB(gormdb)
 
 	// 读取所有表

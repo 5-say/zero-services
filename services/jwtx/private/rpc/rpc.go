@@ -4,10 +4,10 @@ import (
 	"flag"
 	"fmt"
 
-	"main/base/service/jwtx"
-	"main/base/service/jwtx/private/rpc/internal/config"
-	"main/base/service/jwtx/private/rpc/internal/server"
-	"main/base/service/jwtx/private/rpc/internal/svc"
+	"github.com/5-say/zero-services/services/jwtx"
+	"github.com/5-say/zero-services/services/jwtx/private/rpc/internal/config"
+	"github.com/5-say/zero-services/services/jwtx/private/rpc/internal/server"
+	"github.com/5-say/zero-services/services/jwtx/private/rpc/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/service"

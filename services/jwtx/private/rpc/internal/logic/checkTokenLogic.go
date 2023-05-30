@@ -3,8 +3,8 @@ package logic
 import (
 	"context"
 
-	"main/base/service/jwtx"
-	"main/base/service/jwtx/private/rpc/internal/svc"
+	"github.com/5-say/zero-services/services/jwtx"
+	"github.com/5-say/zero-services/services/jwtx/private/rpc/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )

@@ -4,13 +4,14 @@ go 1.20
 
 require (
 	github.com/5-say/go-tools v1.1.0
-	github.com/golang-jwt/jwt/v4 v4.5.0
+	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/zeromicro/go-zero v1.5.2
 	google.golang.org/grpc v1.55.0
 	google.golang.org/protobuf v1.30.0
 	gorm.io/driver/mysql v1.5.1
 	gorm.io/gen v0.3.22
 	gorm.io/gorm v1.25.1
+	gorm.io/plugin/dbresolver v1.3.0
 )
 
 require (
@@ -32,6 +33,7 @@ require (
 	github.com/go-redis/redis/v8 v8.11.5 // indirect
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
+	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect
 	github.com/golang/mock v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/gnostic v0.5.7-v3refs // indirect
@@ -90,7 +92,6 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/datatypes v1.1.1-0.20230130040222-c43177d3cf8c // indirect
 	gorm.io/hints v1.1.0 // indirect
-	gorm.io/plugin/dbresolver v1.3.0 // indirect
 	k8s.io/api v0.26.3 // indirect
 	k8s.io/apimachinery v0.27.0-alpha.3 // indirect
 	k8s.io/client-go v0.26.3 // indirect

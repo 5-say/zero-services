@@ -6,7 +6,7 @@ package jwtxclient
 import (
 	"context"
 
-	"main/base/service/jwtx"
+	"github.com/5-say/zero-services/services/jwtx"
 
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"

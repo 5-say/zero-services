@@ -8,6 +8,7 @@ CREATE TABLE `jwtx_tokens` (
   `last_refresh_at`   datetime            DEFAULT NULL            COMMENT '最后刷新时间',
   `created_at`        datetime            NOT NULL                COMMENT '创建时间',
 
-  PRIMARY KEY (`id`),
-  KEY `admin_id` (`admin_id`)
+  KEY `token_group` (`token_group`),
+  KEY `random_account_id` (`random_account_id`),
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='jwt token 信息表';
