@@ -1,0 +1,27 @@
+services:
+  zero-services:
+    entrypoint:
+      - sleep
+      - infinity
+    image: golang:1.20.2
+    init: true
+    volumes:
+      - go:/go
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+
+  mysql:
+    image: mysql:5.7.41
+    ports:
+      - 63306:3306
+    # NOTE: use of "mysql_native_password" is not recommended: https://dev.mysql.com/doc/refman/8.0/en/upgrading-from-previous-series.html#upgrade-caching-sha2-password
+    # (this is just an example, not intended to be a production configuration)
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+
+volumes:
+  go:
+    name: "go"
