@@ -1,5 +1,6 @@
 services:
-  zero-services:
+  main:
+    name: zero-services
     entrypoint:
       - sleep
       - infinity
