@@ -14,6 +14,7 @@ services:
         source: /var/run/docker.sock
         target: /var/run/docker.sock
     networks:
+      - default
       - etcd
 
   mysql:
@@ -26,6 +27,8 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
+    networks:
+      - default
 
   etcd:
     image: bitnami/etcd:3.5.7
