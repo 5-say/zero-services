@@ -14,7 +14,7 @@ services:
         source: /var/run/docker.sock
         target: /var/run/docker.sock
     networks:
-      - outside
+      - bridge
       - default
 
   mysql:
@@ -35,5 +35,5 @@ volumes:
     external: true
 
 networks:
-  outside:
+  bridge:
     external: true
