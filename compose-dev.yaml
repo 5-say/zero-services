@@ -14,8 +14,7 @@ services:
         source: /var/run/docker.sock
         target: /var/run/docker.sock
     networks:
-      - bridge
-      - default
+      - etcd
 
   mysql:
     image: mysql:5.7.41
@@ -27,13 +26,22 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
+
+  etcd:
+    image: bitnami/etcd:3.5.7
+    ports:
+      - 2379:2379
+      - 2380:2380
+    environment:
+      ALLOW_NONE_AUTHENTICATION: yes
+      ETCD_ADVERTISE_CLIENT_URLS: http://etcd:2379
     networks:
-      - default
+      - etcd
 
 volumes:
   go:
     external: true
 
 networks:
-  bridge:
-    external: true
+  etcd:
+    name: zero-services-etcd
