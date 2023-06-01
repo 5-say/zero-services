@@ -5,8 +5,9 @@ CREATE TABLE `jwtx_tokens` (
   `token_group`       varchar(255)        NOT NULL                COMMENT 'token 分组',
   `random_account_id` varchar(255)        NOT NULL                COMMENT '加密的账户 ID',
   `make_token_ip`     varchar(50)         NOT NULL                COMMENT '首次请求生成 token 的 IP 地址',
-  `last_refresh_at`   datetime            DEFAULT NULL            COMMENT '最后刷新时间',
   `created_at`        datetime            NOT NULL                COMMENT '创建时间',
+  `refresh_at`        datetime            NOT NULL                COMMENT '刷新时间',
+  `expiration_at`     datetime            NOT NULL                COMMENT '过期时间',
 
   KEY `token_group` (`token_group`),
   KEY `random_account_id` (`random_account_id`),

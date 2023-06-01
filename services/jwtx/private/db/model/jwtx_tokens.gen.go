@@ -12,12 +12,13 @@ const TableNameJwtxToken = "jwtx_tokens"
 
 // JwtxToken mapped from table <jwtx_tokens>
 type JwtxToken struct {
-	ID              uint64     `gorm:"column:id;type:bigint(20) unsigned;primaryKey;autoIncrement:true;comment:token ID" json:"id"`
-	TokenGroup      string     `gorm:"column:token_group;type:varchar(255);not null;index:token_group,priority:1;comment:token 分组" json:"token_group"`
-	RandomAccountID string     `gorm:"column:random_account_id;type:varchar(255);not null;index:random_account_id,priority:1;comment:加密的账户 ID" json:"random_account_id"`
-	MakeTokenIP     string     `gorm:"column:make_token_ip;type:varchar(50);not null;comment:首次请求生成 token 的 IP 地址" json:"make_token_ip"`
-	LastRefreshAt   *time.Time `gorm:"column:last_refresh_at;type:datetime;comment:最后刷新时间" json:"last_refresh_at"`
-	CreatedAt       time.Time  `gorm:"column:created_at;type:datetime;not null;comment:创建时间" json:"created_at"`
+	ID              uint64    `gorm:"column:id;type:bigint(20) unsigned;primaryKey;autoIncrement:true;comment:token ID" json:"id"`
+	TokenGroup      string    `gorm:"column:token_group;type:varchar(255);not null;index:token_group,priority:1;comment:token 分组" json:"token_group"`
+	RandomAccountID string    `gorm:"column:random_account_id;type:varchar(255);not null;index:random_account_id,priority:1;comment:加密的账户 ID" json:"random_account_id"`
+	MakeTokenIP     string    `gorm:"column:make_token_ip;type:varchar(50);not null;comment:首次请求生成 token 的 IP 地址" json:"make_token_ip"`
+	CreatedAt       time.Time `gorm:"column:created_at;type:datetime;not null;comment:创建时间" json:"created_at"`
+	RefreshAt       time.Time `gorm:"column:refresh_at;type:datetime;not null;comment:刷新时间" json:"refresh_at"`
+	ExpirationAt    time.Time `gorm:"column:expiration_at;type:datetime;not null;comment:过期时间" json:"expiration_at"`
 }
 
 // TableName JwtxToken's table name

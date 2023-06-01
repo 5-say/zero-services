@@ -1,24 +1,29 @@
 package jwtx
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest"
 )
 
-func RefreshTokenMiddleware(secretKey string, jwtxRpc JwtxClient) rest.Middleware {
+func RefreshTokenMiddleware(config JWTXConfig, jwtxRpc JwtxClient) rest.Middleware {
 	return func(next http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
 
-			logx.Infof("exp: %v", r.Context().Value("exp"))
 			logx.Infof("iat: %v", r.Context().Value("iat"))
-			logx.Infof("rai: %v", r.Context().Value("rai"))
-			logx.Infof("grp: %v", r.Context().Value("grp"))
+			logx.Infof("exp: %v", r.Context().Value("exp"))
+			logx.Infof("tid: %v", r.Context().Value("tid"))
 
-			jwtxRpc.CheckToken(r.Context(), &CheckToken_Request{
-				SecretKey: secretKey,
+			resp, err := jwtxRpc.CheckToken(r.Context(), &CheckToken_Request{
+				SecretKey: config.AccessSecret,
 			})
+			if err != nil {
+			}
+
+			fmt.Println(err, resp)
+
 			next(w, r)
 		}
 	}
