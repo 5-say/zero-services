@@ -4,40 +4,51 @@ package jwtx;
 option go_package="./jwtx";
 
 service jwtx {
-  // 生成 token
+  // 生成 token（登录）
   rpc MakeToken(MakeToken_Request) returns(MakeToken_Response);
 
-  // 校验 token
+  // 校验 token（拓展校验、刷新 token）
   rpc CheckToken(CheckToken_Request) returns(CheckToken_Response);
 
-  // 移除 token
-  rpc DeleteToken(MakeToken_Request) returns(MakeToken_Response);
+  // 移除 token（安全退出）
+  rpc DeleteToken(DeleteToken_Request) returns(DeleteToken_Response);
 }
 
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 生成 token - 请求
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 生成 token（登录）
+// - 请求
 message MakeToken_Request {
   string secretKey       = 1; // 密钥
   string group           = 2; // 分组
-  int64  expSecond       = 3; // 过期时长（秒）
+  int64  accessExpire    = 3; // token 过期时间（秒）
   string randomAccountID = 4; // 加密的账户 ID
   string requestIP       = 5; // 发起请求的 IP 地址
 }
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 生成 token - 响应
+// - 响应
 message MakeToken_Response {
   string token = 1;
 }
 
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 校验 token - 请求
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 校验 token（拓展校验、刷新 token）
+// - 请求
 message CheckToken_Request {
-  string secretKey = 1; // 密钥
-  int64  refSecond = 2; // 刷新间隔（秒）
-  bool   checkIP   = 3; // 是否开启 IP 一致性校验，当前 IP 必须与登录时 IP 一致
-  string requestIP = 4; // 发起请求的 IP 地址
-  uint64 tid       = 5; // token ID
-  int64  iat       = 6; // 签发时间
+  string accessSecret    = 1; // 密钥
+  int64  refreshInterval = 2; // 刷新时间间隔（秒）
+  int64  faultTolerance  = 3; // 并发容错时间（秒）
+  bool   checkIP         = 4; // 是否开启 IP 一致性校验，当前 IP 必须与登录时 IP 一致
+  string requestIP       = 5; // 发起请求的 IP 地址
+  uint64 tid             = 6; // token ID
+  int64  iat             = 7; // 从 token 中解析出的签发时间
 }
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 校验 token - 响应
+// - 响应
 message CheckToken_Response {
   string newToken        = 1;
   string randomAccountID = 2; // 加密的账户 ID
 }
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 移除 token（安全退出）
+// - 请求
+message DeleteToken_Request {
+  uint64 tid = 1; // token ID
+}
+// - 响应
+message DeleteToken_Response {}

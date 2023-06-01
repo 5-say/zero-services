@@ -22,14 +22,20 @@ func NewJwtxServer(svcCtx *svc.ServiceContext) *JwtxServer {
 	}
 }
 
-// 生成 token
+// 生成 token（登录）
 func (s *JwtxServer) MakeToken(ctx context.Context, in *jwtx.MakeToken_Request) (*jwtx.MakeToken_Response, error) {
 	l := logic.NewMakeTokenLogic(ctx, s.svcCtx)
 	return l.MakeToken(in)
 }
 
-// 校验 token
+// 校验 token（拓展校验、刷新 token）
 func (s *JwtxServer) CheckToken(ctx context.Context, in *jwtx.CheckToken_Request) (*jwtx.CheckToken_Response, error) {
 	l := logic.NewCheckTokenLogic(ctx, s.svcCtx)
 	return l.CheckToken(in)
+}
+
+// 移除 token（安全退出）
+func (s *JwtxServer) DeleteToken(ctx context.Context, in *jwtx.DeleteToken_Request) (*jwtx.DeleteToken_Response, error) {
+	l := logic.NewDeleteTokenLogic(ctx, s.svcCtx)
+	return l.DeleteToken(in)
 }

@@ -19,18 +19,21 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Jwtx_MakeToken_FullMethodName  = "/jwtx.jwtx/MakeToken"
-	Jwtx_CheckToken_FullMethodName = "/jwtx.jwtx/CheckToken"
+	Jwtx_MakeToken_FullMethodName   = "/jwtx.jwtx/MakeToken"
+	Jwtx_CheckToken_FullMethodName  = "/jwtx.jwtx/CheckToken"
+	Jwtx_DeleteToken_FullMethodName = "/jwtx.jwtx/DeleteToken"
 )
 
 // JwtxClient is the client API for Jwtx service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type JwtxClient interface {
-	// 生成 token
+	// 生成 token（登录）
 	MakeToken(ctx context.Context, in *MakeToken_Request, opts ...grpc.CallOption) (*MakeToken_Response, error)
-	// 校验 token
+	// 校验 token（拓展校验、刷新 token）
 	CheckToken(ctx context.Context, in *CheckToken_Request, opts ...grpc.CallOption) (*CheckToken_Response, error)
+	// 移除 token（安全退出）
+	DeleteToken(ctx context.Context, in *DeleteToken_Request, opts ...grpc.CallOption) (*DeleteToken_Response, error)
 }
 
 type jwtxClient struct {
@@ -59,14 +62,25 @@ func (c *jwtxClient) CheckToken(ctx context.Context, in *CheckToken_Request, opt
 	return out, nil
 }
 
+func (c *jwtxClient) DeleteToken(ctx context.Context, in *DeleteToken_Request, opts ...grpc.CallOption) (*DeleteToken_Response, error) {
+	out := new(DeleteToken_Response)
+	err := c.cc.Invoke(ctx, Jwtx_DeleteToken_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // JwtxServer is the server API for Jwtx service.
 // All implementations must embed UnimplementedJwtxServer
 // for forward compatibility
 type JwtxServer interface {
-	// 生成 token
+	// 生成 token（登录）
 	MakeToken(context.Context, *MakeToken_Request) (*MakeToken_Response, error)
-	// 校验 token
+	// 校验 token（拓展校验、刷新 token）
 	CheckToken(context.Context, *CheckToken_Request) (*CheckToken_Response, error)
+	// 移除 token（安全退出）
+	DeleteToken(context.Context, *DeleteToken_Request) (*DeleteToken_Response, error)
 	mustEmbedUnimplementedJwtxServer()
 }
 
@@ -79,6 +93,9 @@ func (UnimplementedJwtxServer) MakeToken(context.Context, *MakeToken_Request) (*
 }
 func (UnimplementedJwtxServer) CheckToken(context.Context, *CheckToken_Request) (*CheckToken_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckToken not implemented")
+}
+func (UnimplementedJwtxServer) DeleteToken(context.Context, *DeleteToken_Request) (*DeleteToken_Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteToken not implemented")
 }
 func (UnimplementedJwtxServer) mustEmbedUnimplementedJwtxServer() {}
 
@@ -129,6 +146,24 @@ func _Jwtx_CheckToken_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Jwtx_DeleteToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteToken_Request)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(JwtxServer).DeleteToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Jwtx_DeleteToken_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(JwtxServer).DeleteToken(ctx, req.(*DeleteToken_Request))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Jwtx_ServiceDesc is the grpc.ServiceDesc for Jwtx service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -143,6 +178,10 @@ var Jwtx_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CheckToken",
 			Handler:    _Jwtx_CheckToken_Handler,
+		},
+		{
+			MethodName: "DeleteToken",
+			Handler:    _Jwtx_DeleteToken_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

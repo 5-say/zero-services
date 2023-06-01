@@ -17,7 +17,7 @@ func RefreshTokenMiddleware(config JWTXConfig, jwtxRpc JwtxClient) rest.Middlewa
 			logx.Infof("tid: %v", r.Context().Value("tid"))
 
 			resp, err := jwtxRpc.CheckToken(r.Context(), &CheckToken_Request{
-				SecretKey: config.AccessSecret,
+				AccessSecret: config.AccessSecret,
 			})
 			if err != nil {
 			}

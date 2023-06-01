@@ -42,7 +42,7 @@ func (l *CheckTokenLogic) CheckToken(in *jwtx.CheckToken_Request) (*jwtx.CheckTo
 
 	// 确认是否需要刷新
 	now := time.Now()
-	if in.Iat+in.RefSecond < now.Unix() { // 当前 token 需要刷新
+	if in.Iat+in.RefreshInterval < now.Unix() { // 当前 token 需要刷新
 
 		if token.RefreshAt.Unix() == in.Iat { // 当前 token 有效
 			// 更新数据库

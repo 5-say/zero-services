@@ -13,16 +13,20 @@ import (
 )
 
 type (
-	CheckToken_Request  = jwtx.CheckToken_Request
-	CheckToken_Response = jwtx.CheckToken_Response
-	MakeToken_Request   = jwtx.MakeToken_Request
-	MakeToken_Response  = jwtx.MakeToken_Response
+	CheckToken_Request   = jwtx.CheckToken_Request
+	CheckToken_Response  = jwtx.CheckToken_Response
+	DeleteToken_Request  = jwtx.DeleteToken_Request
+	DeleteToken_Response = jwtx.DeleteToken_Response
+	MakeToken_Request    = jwtx.MakeToken_Request
+	MakeToken_Response   = jwtx.MakeToken_Response
 
 	Jwtx interface {
-		// 生成 token
+		// 生成 token（登录）
 		MakeToken(ctx context.Context, in *MakeToken_Request, opts ...grpc.CallOption) (*MakeToken_Response, error)
-		// 校验 token
+		// 校验 token（拓展校验、刷新 token）
 		CheckToken(ctx context.Context, in *CheckToken_Request, opts ...grpc.CallOption) (*CheckToken_Response, error)
+		// 移除 token（安全退出）
+		DeleteToken(ctx context.Context, in *DeleteToken_Request, opts ...grpc.CallOption) (*DeleteToken_Response, error)
 	}
 
 	defaultJwtx struct {
@@ -36,14 +40,20 @@ func NewJwtx(cli zrpc.Client) Jwtx {
 	}
 }
 
-// 生成 token
+// 生成 token（登录）
 func (m *defaultJwtx) MakeToken(ctx context.Context, in *MakeToken_Request, opts ...grpc.CallOption) (*MakeToken_Response, error) {
 	client := jwtx.NewJwtxClient(m.cli.Conn())
 	return client.MakeToken(ctx, in, opts...)
 }
 
-// 校验 token
+// 校验 token（拓展校验、刷新 token）
 func (m *defaultJwtx) CheckToken(ctx context.Context, in *CheckToken_Request, opts ...grpc.CallOption) (*CheckToken_Response, error) {
 	client := jwtx.NewJwtxClient(m.cli.Conn())
 	return client.CheckToken(ctx, in, opts...)
+}
+
+// 移除 token（安全退出）
+func (m *defaultJwtx) DeleteToken(ctx context.Context, in *DeleteToken_Request, opts ...grpc.CallOption) (*DeleteToken_Response, error) {
+	client := jwtx.NewJwtxClient(m.cli.Conn())
+	return client.DeleteToken(ctx, in, opts...)
 }

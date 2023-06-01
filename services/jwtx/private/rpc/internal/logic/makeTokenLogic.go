@@ -52,7 +52,7 @@ func (l *MakeTokenLogic) MakeToken(in *jwtx.MakeToken_Request) (*jwtx.MakeToken_
 		MakeTokenIP:     in.RequestIP,
 		CreatedAt:       now,
 		RefreshAt:       now,
-		ExpirationAt:    now.Add(time.Duration(in.ExpSecond) * time.Second),
+		ExpirationAt:    now.Add(time.Duration(in.AccessExpire) * time.Second),
 	}
 	if err := q.JwtxToken.Create(&token); err != nil {
 		return nil, err
@@ -60,9 +60,9 @@ func (l *MakeTokenLogic) MakeToken(in *jwtx.MakeToken_Request) (*jwtx.MakeToken_
 
 	// 构造 token 字符串
 	claims := make(jwt.MapClaims)
-	claims["iat"] = now.Unix()                // 签发时间
-	claims["exp"] = now.Unix() + in.ExpSecond // 过期时间
-	claims["tid"] = token.ID                  // token ID
+	claims["iat"] = now.Unix()                   // 签发时间
+	claims["exp"] = now.Unix() + in.AccessExpire // 过期时间
+	claims["tid"] = token.ID                     // token ID
 	jwtToken := jwt.New(jwt.SigningMethodHS256)
 	jwtToken.Claims = claims
 	tokenStr, err := jwtToken.SignedString([]byte(in.SecretKey))
