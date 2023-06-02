@@ -3,6 +3,7 @@ module github.com/5-say/zero-services
 go 1.20
 
 require (
+	github.com/5-say/go-tools v1.1.3
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/pkg/errors v0.9.1
 	github.com/zeromicro/go-zero v1.5.2
