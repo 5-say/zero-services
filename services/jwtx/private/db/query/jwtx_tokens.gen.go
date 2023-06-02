@@ -32,7 +32,8 @@ func newJwtxToken(db *gorm.DB, opts ...gen.DOOption) jwtxToken {
 	_jwtxToken.RandomAccountID = field.NewString(tableName, "random_account_id")
 	_jwtxToken.MakeTokenIP = field.NewString(tableName, "make_token_ip")
 	_jwtxToken.CreatedAt = field.NewTime(tableName, "created_at")
-	_jwtxToken.RefreshAt = field.NewTime(tableName, "refresh_at")
+	_jwtxToken.LastRefreshAt = field.NewTime(tableName, "last_refresh_at")
+	_jwtxToken.FinalRefreshAt = field.NewTime(tableName, "final_refresh_at")
 	_jwtxToken.ExpirationAt = field.NewTime(tableName, "expiration_at")
 
 	_jwtxToken.fillFieldMap()
@@ -49,7 +50,8 @@ type jwtxToken struct {
 	RandomAccountID field.String // 加密的账户 ID
 	MakeTokenIP     field.String // 首次请求生成 token 的 IP 地址
 	CreatedAt       field.Time   // 创建时间
-	RefreshAt       field.Time   // 刷新时间
+	LastRefreshAt   field.Time   // 上次的刷新时间
+	FinalRefreshAt  field.Time   // 最后的刷新时间
 	ExpirationAt    field.Time   // 过期时间
 
 	fieldMap map[string]field.Expr
@@ -72,7 +74,8 @@ func (j *jwtxToken) updateTableName(table string) *jwtxToken {
 	j.RandomAccountID = field.NewString(table, "random_account_id")
 	j.MakeTokenIP = field.NewString(table, "make_token_ip")
 	j.CreatedAt = field.NewTime(table, "created_at")
-	j.RefreshAt = field.NewTime(table, "refresh_at")
+	j.LastRefreshAt = field.NewTime(table, "last_refresh_at")
+	j.FinalRefreshAt = field.NewTime(table, "final_refresh_at")
 	j.ExpirationAt = field.NewTime(table, "expiration_at")
 
 	j.fillFieldMap()
@@ -90,13 +93,14 @@ func (j *jwtxToken) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (j *jwtxToken) fillFieldMap() {
-	j.fieldMap = make(map[string]field.Expr, 7)
+	j.fieldMap = make(map[string]field.Expr, 8)
 	j.fieldMap["id"] = j.ID
 	j.fieldMap["token_group"] = j.TokenGroup
 	j.fieldMap["random_account_id"] = j.RandomAccountID
 	j.fieldMap["make_token_ip"] = j.MakeTokenIP
 	j.fieldMap["created_at"] = j.CreatedAt
-	j.fieldMap["refresh_at"] = j.RefreshAt
+	j.fieldMap["last_refresh_at"] = j.LastRefreshAt
+	j.fieldMap["final_refresh_at"] = j.FinalRefreshAt
 	j.fieldMap["expiration_at"] = j.ExpirationAt
 }
 

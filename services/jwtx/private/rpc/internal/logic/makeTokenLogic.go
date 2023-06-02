@@ -8,7 +8,6 @@ import (
 	"github.com/5-say/zero-services/services/jwtx/private/db/model"
 	"github.com/5-say/zero-services/services/jwtx/private/db/query"
 	"github.com/5-say/zero-services/services/jwtx/private/rpc/internal/svc"
-	"github.com/golang-jwt/jwt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 
@@ -51,7 +50,8 @@ func (l *MakeTokenLogic) MakeToken(in *jwtx.MakeToken_Request) (*jwtx.MakeToken_
 		RandomAccountID: in.RandomAccountID,
 		MakeTokenIP:     in.RequestIP,
 		CreatedAt:       now,
-		RefreshAt:       now,
+		LastRefreshAt:   now,
+		FinalRefreshAt:  now,
 		ExpirationAt:    now.Add(time.Duration(in.AccessExpire) * time.Second),
 	}
 	if err := q.JwtxToken.Create(&token); err != nil {
@@ -59,13 +59,7 @@ func (l *MakeTokenLogic) MakeToken(in *jwtx.MakeToken_Request) (*jwtx.MakeToken_
 	}
 
 	// 构造 token 字符串
-	claims := make(jwt.MapClaims)
-	claims["iat"] = now.Unix()                   // 签发时间
-	claims["exp"] = now.Unix() + in.AccessExpire // 过期时间
-	claims["tid"] = token.ID                     // token ID
-	jwtToken := jwt.New(jwt.SigningMethodHS256)
-	jwtToken.Claims = claims
-	tokenStr, err := jwtToken.SignedString([]byte(in.SecretKey))
+	tokenStr, err := makeTokenStr(in.AccessSecret, now.Unix(), now.Unix()+in.AccessExpire, token.ID)
 
 	return &jwtx.MakeToken_Response{
 		Token: tokenStr,

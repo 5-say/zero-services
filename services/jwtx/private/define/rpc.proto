@@ -17,9 +17,9 @@ service jwtx {
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 生成 token（登录）
 // - 请求
 message MakeToken_Request {
-  string secretKey       = 1; // 密钥
-  string group           = 2; // 分组
-  int64  accessExpire    = 3; // token 过期时间（秒）
+  string accessSecret    = 1; // 密钥
+  int64  accessExpire    = 2; // token 过期时间（秒）
+  string group           = 3; // token 分组
   string randomAccountID = 4; // 加密的账户 ID
   string requestIP       = 5; // 发起请求的 IP 地址
 }
@@ -36,8 +36,9 @@ message CheckToken_Request {
   int64  faultTolerance  = 3; // 并发容错时间（秒）
   bool   checkIP         = 4; // 是否开启 IP 一致性校验，当前 IP 必须与登录时 IP 一致
   string requestIP       = 5; // 发起请求的 IP 地址
-  uint64 tid             = 6; // token ID
-  int64  iat             = 7; // 从 token 中解析出的签发时间
+  uint64 tid             = 6; // 从 token 中解析出的 token ID
+  int64  iat             = 7; // 从 token 中解析出的 签发时间
+  int64  exp             = 8; // 从 token 中解析出的 过期时间
 }
 // - 响应
 message CheckToken_Response {

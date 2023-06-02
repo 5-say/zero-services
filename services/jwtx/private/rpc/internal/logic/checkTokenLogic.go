@@ -7,6 +7,7 @@ import (
 	"github.com/5-say/zero-services/services/jwtx"
 	"github.com/5-say/zero-services/services/jwtx/private/db/query"
 	"github.com/5-say/zero-services/services/jwtx/private/rpc/internal/svc"
+	"github.com/pkg/errors"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 
@@ -40,20 +41,56 @@ func (l *CheckTokenLogic) CheckToken(in *jwtx.CheckToken_Request) (*jwtx.CheckTo
 		return nil, err
 	}
 
-	// 确认是否需要刷新
-	now := time.Now()
-	if in.Iat+in.RefreshInterval < now.Unix() { // 当前 token 需要刷新
-
-		if token.RefreshAt.Unix() == in.Iat { // 当前 token 有效
-			// 更新数据库
-			// 生成新 token
-		} else { // 当前 token 无效，token 已被并发刷新
-			// 确认并发容错时间
-			if false {
-				// 超出并发容错时间，返回错误信息
-			}
+	// IP 一致性校验
+	if in.CheckIP {
+		if in.RequestIP != token.MakeTokenIP {
+			return nil, errors.New("check ip fail")
 		}
 	}
 
-	return &jwtx.CheckToken_Response{}, nil
+	// token 刷新校验
+	var (
+		newToken = ""
+		now      = time.Now()
+	)
+	if in.Iat == token.FinalRefreshAt.Unix() { // token 未刷新
+
+		// 需要刷新 token
+		if in.Iat+in.RefreshInterval > now.Unix() {
+
+			// 构造 token 字符串（过期时间不变，签发时间顺延）
+			newToken, err = makeTokenStr(in.AccessSecret, now.Unix(), in.Exp, token.ID)
+			if err != nil {
+				return nil, err
+			}
+
+			// 更新数据库
+			_, err = m.Where(m.ID.Eq(token.ID)).UpdateSimple(
+				m.LastRefreshAt.Value(token.FinalRefreshAt),
+				m.FinalRefreshAt.Value(now),
+			)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		// 验证通过
+		return &jwtx.CheckToken_Response{
+			NewToken:        newToken,
+			RandomAccountID: token.RandomAccountID,
+		}, nil
+
+	} else if in.Iat == token.LastRefreshAt.Unix() { // token 已刷新
+
+		// 当前时间 未超出 并发容错时间（允许继续使用）
+		if now.Unix() < token.FinalRefreshAt.Unix()+in.FaultTolerance {
+			// 验证通过
+			return &jwtx.CheckToken_Response{
+				NewToken:        "",
+				RandomAccountID: token.RandomAccountID,
+			}, nil
+		}
+	}
+
+	return nil, errors.New("token refreshed")
 }
