@@ -16,7 +16,7 @@ func RefreshTokenMiddleware(simpleRandomConfig random.SimpleRandomConfig, jwtxCo
 		return func(w http.ResponseWriter, r *http.Request) {
 
 			// 获取客户端 IP 地址
-			requestIP, _ := ip.GetRequestIP(r)
+			requestIP := ip.GetRequestIP(r)
 
 			// 校验 token（拓展校验、刷新 token）
 			resp, err := jwtxRpc.CheckToken(r.Context(), &CheckToken_Request{

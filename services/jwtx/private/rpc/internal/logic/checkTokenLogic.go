@@ -31,7 +31,7 @@ func NewCheckTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CheckT
 // 校验 token
 func (l *CheckTokenLogic) CheckToken(in *jwtx.CheckToken_Request) (*jwtx.CheckToken_Response, error) {
 	// 初始化数据库
-	gormdb, _ := gorm.Open(mysql.Open("root:root@(mysql:3306)/demo?charset=utf8mb4&parseTime=True&loc=Local"))
+	gormdb, _ := gorm.Open(mysql.Open("root:root@(mysql:3306)/jwtx?charset=utf8mb4&parseTime=True&loc=Local"))
 	q := query.Use(gormdb)
 
 	// 查找 token

@@ -31,7 +31,7 @@ func NewMakeTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *MakeTok
 // 生成 token
 func (l *MakeTokenLogic) MakeToken(in *jwtx.MakeToken_Request) (*jwtx.MakeToken_Response, error) {
 	// 初始化数据库
-	gormdb, _ := gorm.Open(mysql.Open("root:root@(mysql:3306)/demo?charset=utf8mb4&parseTime=True&loc=Local"))
+	gormdb, _ := gorm.Open(mysql.Open("root:root@(mysql:3306)/jwtx?charset=utf8mb4&parseTime=True&loc=Local"))
 	q := query.Use(gormdb)
 
 	// 清除旧 token，默认单端登录；若 group 混入设备码，则可实现多端登录

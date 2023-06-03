@@ -29,7 +29,7 @@ func NewDeleteTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Delet
 // 移除 token（安全退出）
 func (l *DeleteTokenLogic) DeleteToken(in *jwtx.DeleteToken_Request) (*jwtx.DeleteToken_Response, error) {
 	// 初始化数据库
-	gormdb, _ := gorm.Open(mysql.Open("root:root@(mysql:3306)/demo?charset=utf8mb4&parseTime=True&loc=Local"))
+	gormdb, _ := gorm.Open(mysql.Open("root:root@(mysql:3306)/jwtx?charset=utf8mb4&parseTime=True&loc=Local"))
 	q := query.Use(gormdb)
 
 	// 移除 token
