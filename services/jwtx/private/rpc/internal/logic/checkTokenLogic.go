@@ -5,11 +5,10 @@ import (
 	"time"
 
 	"github.com/5-say/zero-services/services/jwtx"
-	"github.com/5-say/zero-services/services/jwtx/private/db/query"
+	"github.com/5-say/zero-services/services/jwtx/private/db/dao"
+	"github.com/5-say/zero-services/services/jwtx/private/rpc/common"
 	"github.com/5-say/zero-services/services/jwtx/private/rpc/internal/svc"
 	"github.com/pkg/errors"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -31,8 +30,7 @@ func NewCheckTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CheckT
 // 校验 token
 func (l *CheckTokenLogic) CheckToken(in *jwtx.CheckToken_Request) (*jwtx.CheckToken_Response, error) {
 	// 初始化数据库
-	gormdb, _ := gorm.Open(mysql.Open("root:root@(mysql:3306)/jwtx?charset=utf8mb4&parseTime=True&loc=Local"))
-	q := query.Use(gormdb)
+	q := dao.Common()
 
 	// 查找 token
 	m := q.JwtxToken
@@ -59,7 +57,7 @@ func (l *CheckTokenLogic) CheckToken(in *jwtx.CheckToken_Request) (*jwtx.CheckTo
 		if in.Iat+in.RefreshInterval > now.Unix() {
 
 			// 构造 token 字符串（过期时间不变，签发时间顺延）
-			newToken, err = makeTokenStr(in.AccessSecret, now.Unix(), in.Exp, token.ID)
+			newToken, err = common.MakeTokenStr(in.AccessSecret, now.Unix(), in.Exp, token.ID)
 			if err != nil {
 				return nil, err
 			}

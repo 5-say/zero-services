@@ -16,7 +16,7 @@ import (
 
 	"gorm.io/plugin/dbresolver"
 
-	"github.com/5-say/zero-services/services/jwtx/private/db/model"
+	"github.com/5-say/zero-services/services/jwtx/private/db/dao/model"
 )
 
 func newJwtxToken(db *gorm.DB, opts ...gen.DOOption) jwtxToken {

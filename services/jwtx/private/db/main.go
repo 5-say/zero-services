@@ -1,10 +1,19 @@
 package main
 
 import (
-	"gorm.io/driver/mysql"
+	"flag"
+
+	"github.com/5-say/go-tools/tools/db"
+	"github.com/zeromicro/go-zero/core/conf"
 	"gorm.io/gen"
 	"gorm.io/gorm"
 )
+
+type Config struct {
+	DB db.Config
+}
+
+var configFile = flag.String("f", "../rpc/etc/rpc.yaml", "the config file")
 
 // Dynamic SQL
 type Querier interface {
@@ -14,7 +23,7 @@ type Querier interface {
 
 func main() {
 	g := gen.NewGenerator(gen.Config{
-		OutPath: "./query",
+		OutPath: "./dao/query",
 		Mode:    gen.WithoutContext | gen.WithDefaultQuery | gen.WithQueryInterface, // generate mode
 
 		FieldNullable:     true, // 数据库中的字段可为空，则生成 struct 字段为指针类型
@@ -35,8 +44,10 @@ func main() {
 	})
 
 	// 设置数据库连接
-	gormdb, _ := gorm.Open(mysql.Open("root:root@(mysql:3306)/jwtx?charset=utf8mb4&parseTime=True&loc=Local"))
-	g.UseDB(gormdb)
+	var config Config
+	conf.MustLoad(*configFile, &config)
+	config.DB.LogLevel = 2
+	g.UseDB(db.Open(config.DB, db.LogWriter()))
 
 	// 读取所有表
 	g.ApplyBasic(g.GenerateAllTable()...)

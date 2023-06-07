@@ -1,3 +1,4 @@
+-- Active: 1681788803673@@mysql@3306@jwtx
 DROP TABLE IF EXISTS `jwtx_tokens`;
 CREATE TABLE `jwtx_tokens` (
 

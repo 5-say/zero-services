@@ -4,7 +4,9 @@ import (
 	"flag"
 	"fmt"
 
+	"github.com/5-say/go-tools/tools/db"
 	"github.com/5-say/zero-services/services/jwtx"
+	"github.com/5-say/zero-services/services/jwtx/private/db/dao"
 	"github.com/5-say/zero-services/services/jwtx/private/rpc/internal/config"
 	"github.com/5-say/zero-services/services/jwtx/private/rpc/internal/server"
 	"github.com/5-say/zero-services/services/jwtx/private/rpc/internal/svc"
@@ -23,6 +25,10 @@ func main() {
 
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
+
+	// 初始化公共数据库连接
+	dao.SetCommon(c.DB, db.LogWriter())
+
 	ctx := svc.NewServiceContext(c)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
