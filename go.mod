@@ -6,7 +6,7 @@ require (
 	github.com/5-say/go-tools v1.1.4
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/pkg/errors v0.9.1
-	github.com/zeromicro/go-zero v1.5.2
+	github.com/zeromicro/go-zero v1.5.3
 	google.golang.org/grpc v1.55.0
 	google.golang.org/protobuf v1.30.0
 	gorm.io/driver/mysql v1.5.1
