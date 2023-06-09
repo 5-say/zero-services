@@ -20,8 +20,9 @@ message MakeToken_Request {
   string accessSecret    = 1; // 密钥
   int64  accessExpire    = 2; // token 过期时间（秒）
   string group           = 3; // token 分组
-  string randomAccountID = 4; // 加密的账户 ID
-  string requestIP       = 5; // 发起请求的 IP 地址
+  uint64 accountID       = 4; // 原始的账户 ID
+  string randomAccountID = 5; // 加密的账户 ID
+  string requestIP       = 6; // 发起请求的 IP 地址
 }
 // - 响应
 message MakeToken_Response {

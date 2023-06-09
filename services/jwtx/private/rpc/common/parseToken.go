@@ -16,7 +16,6 @@ func ParseToken(tokenString string, hmacSampleSecret []byte) (claims jwt.MapClai
 	})
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		fmt.Println(claims["foo"], claims["nbf"])
 		return claims, nil
 	} else {
 		return nil, err

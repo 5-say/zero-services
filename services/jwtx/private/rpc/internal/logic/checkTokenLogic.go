@@ -30,13 +30,13 @@ func NewCheckTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CheckT
 // 校验 token
 func (l *CheckTokenLogic) CheckToken(in *jwtx.CheckToken_Request) (*jwtx.CheckToken_Response, error) {
 	// 解析 token 字符串
-	claims, err := common.ParseToken(in.RequestToken+"7", []byte(in.AccessSecret))
+	claims, err := common.ParseToken(in.RequestToken, []byte(in.AccessSecret))
 	if err != nil {
 		return nil, t.RPCError(err.Error(), "parse fail")
 	}
 	iat := int64(claims["iat"].(float64))
-	exp := int64(claims["exp"].(float64))
 	tid := uint64(claims["tid"].(float64))
+	randomAccountID := claims["rai"].(string)
 
 	// 初始化数据库
 	q := dao.Common()
@@ -60,13 +60,18 @@ func (l *CheckTokenLogic) CheckToken(in *jwtx.CheckToken_Request) (*jwtx.CheckTo
 		newToken = ""
 		now      = time.Now()
 	)
+	// l.Debug("iat", iat)
+	// l.Debug("最后刷新时间", token.FinalRefreshAt.Unix())
+	// l.Debug("刷新时间间隔", in.RefreshInterval)
+	// l.Debug("上次刷新时间", token.LastRefreshAt.Unix())
+	// l.Debug("并发容错时间", in.FaultTolerance)
 	if iat == token.FinalRefreshAt.Unix() { // token 未刷新
 
 		// 需要刷新 token
-		if iat+in.RefreshInterval > now.Unix() {
+		if iat+in.RefreshInterval < now.Unix() {
 
 			// 构造 token 字符串（过期时间不变，签发时间顺延）
-			newToken, err = common.MakeTokenStr(in.AccessSecret, now.Unix(), exp, token.ID)
+			newToken, err = common.MakeTokenStr(in.AccessSecret, now, token.ExpirationAt, token.ID, randomAccountID)
 			if err != nil {
 				return nil, t.RPCError(err.Error(), "make fail")
 			}
@@ -84,7 +89,7 @@ func (l *CheckTokenLogic) CheckToken(in *jwtx.CheckToken_Request) (*jwtx.CheckTo
 		// 验证通过
 		return &jwtx.CheckToken_Response{
 			NewToken:        newToken,
-			RandomAccountID: token.RandomAccountID,
+			RandomAccountID: randomAccountID,
 		}, nil
 
 	} else if iat == token.LastRefreshAt.Unix() { // token 已刷新
@@ -94,7 +99,7 @@ func (l *CheckTokenLogic) CheckToken(in *jwtx.CheckToken_Request) (*jwtx.CheckTo
 			// 验证通过
 			return &jwtx.CheckToken_Response{
 				NewToken:        "",
-				RandomAccountID: token.RandomAccountID,
+				RandomAccountID: randomAccountID,
 			}, nil
 		}
 	}

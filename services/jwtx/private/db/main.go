@@ -13,7 +13,7 @@ type Config struct {
 	DB db.Config
 }
 
-var configFile = flag.String("f", "../rpc/etc/rpc.yaml", "the config file")
+var configFile = flag.String("f", "../rpc/etc/jwtx.yaml", "the config file")
 
 // Dynamic SQL
 type Querier interface {

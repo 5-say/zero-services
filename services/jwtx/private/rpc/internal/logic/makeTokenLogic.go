@@ -37,7 +37,7 @@ func (l *MakeTokenLogic) MakeToken(in *jwtx.MakeToken_Request) (*jwtx.MakeToken_
 	m := q.JwtxToken
 	if _, err := m.Where(
 		m.TokenGroup.Eq(in.Group),
-		m.RandomAccountID.Eq(in.RandomAccountID),
+		m.AccountID.Eq(in.AccountID),
 	).Delete(); err != nil {
 		return nil, t.RPCError(err.Error(), "clear fail")
 	}
@@ -45,20 +45,20 @@ func (l *MakeTokenLogic) MakeToken(in *jwtx.MakeToken_Request) (*jwtx.MakeToken_
 	// 创建新 token
 	now := time.Now()
 	token := model.JwtxToken{
-		TokenGroup:      in.Group,
-		RandomAccountID: in.RandomAccountID,
-		MakeTokenIP:     in.RequestIP,
-		CreatedAt:       now,
-		LastRefreshAt:   now,
-		FinalRefreshAt:  now,
-		ExpirationAt:    now.Add(time.Duration(in.AccessExpire) * time.Second),
+		TokenGroup:     in.Group,
+		AccountID:      in.AccountID,
+		MakeTokenIP:    in.RequestIP,
+		CreatedAt:      now,
+		LastRefreshAt:  now,
+		FinalRefreshAt: now,
+		ExpirationAt:   now.Add(time.Duration(in.AccessExpire) * time.Second),
 	}
 	if err := q.JwtxToken.Create(&token); err != nil {
 		return nil, t.RPCError(err.Error(), "create fail")
 	}
 
 	// 构造 token 字符串
-	tokenStr, err := common.MakeTokenStr(in.AccessSecret, now.Unix(), now.Unix()+in.AccessExpire, token.ID)
+	tokenStr, err := common.MakeTokenStr(in.AccessSecret, now, now.Add(time.Second*time.Duration(in.AccessExpire)), token.ID, in.RandomAccountID)
 	if err != nil {
 		return nil, t.RPCError(err.Error(), "make fail")
 	}

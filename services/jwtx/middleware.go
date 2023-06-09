@@ -2,6 +2,7 @@ package jwtx
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/5-say/go-tools/tools/ip"
@@ -36,6 +37,7 @@ func RefreshTokenMiddleware(
 				httpx.ErrorCtx(r.Context(), w, errHandler(err))
 
 			} else {
+				fmt.Println("- - - - - - - - - ", resp) // 可以通过外部传参补充日志
 
 				// 响应头填充刷新后的 token
 				w.Header().Add("NEW-TOKEN", resp.NewToken)

@@ -29,7 +29,7 @@ func newJwtxToken(db *gorm.DB, opts ...gen.DOOption) jwtxToken {
 	_jwtxToken.ALL = field.NewAsterisk(tableName)
 	_jwtxToken.ID = field.NewUint64(tableName, "id")
 	_jwtxToken.TokenGroup = field.NewString(tableName, "token_group")
-	_jwtxToken.RandomAccountID = field.NewString(tableName, "random_account_id")
+	_jwtxToken.AccountID = field.NewUint64(tableName, "account_id")
 	_jwtxToken.MakeTokenIP = field.NewString(tableName, "make_token_ip")
 	_jwtxToken.CreatedAt = field.NewTime(tableName, "created_at")
 	_jwtxToken.LastRefreshAt = field.NewTime(tableName, "last_refresh_at")
@@ -44,15 +44,15 @@ func newJwtxToken(db *gorm.DB, opts ...gen.DOOption) jwtxToken {
 type jwtxToken struct {
 	jwtxTokenDo
 
-	ALL             field.Asterisk
-	ID              field.Uint64 // token ID
-	TokenGroup      field.String // token 分组
-	RandomAccountID field.String // 加密的账户 ID
-	MakeTokenIP     field.String // 首次请求生成 token 的 IP 地址
-	CreatedAt       field.Time   // 创建时间
-	LastRefreshAt   field.Time   // 上次的刷新时间
-	FinalRefreshAt  field.Time   // 最后的刷新时间
-	ExpirationAt    field.Time   // 过期时间
+	ALL            field.Asterisk
+	ID             field.Uint64 // token ID
+	TokenGroup     field.String // token 分组
+	AccountID      field.Uint64 // 账户 ID
+	MakeTokenIP    field.String // 首次请求生成 token 的 IP 地址
+	CreatedAt      field.Time   // 创建时间
+	LastRefreshAt  field.Time   // 上次的刷新时间
+	FinalRefreshAt field.Time   // 最后的刷新时间
+	ExpirationAt   field.Time   // 过期时间
 
 	fieldMap map[string]field.Expr
 }
@@ -71,7 +71,7 @@ func (j *jwtxToken) updateTableName(table string) *jwtxToken {
 	j.ALL = field.NewAsterisk(table)
 	j.ID = field.NewUint64(table, "id")
 	j.TokenGroup = field.NewString(table, "token_group")
-	j.RandomAccountID = field.NewString(table, "random_account_id")
+	j.AccountID = field.NewUint64(table, "account_id")
 	j.MakeTokenIP = field.NewString(table, "make_token_ip")
 	j.CreatedAt = field.NewTime(table, "created_at")
 	j.LastRefreshAt = field.NewTime(table, "last_refresh_at")
@@ -96,7 +96,7 @@ func (j *jwtxToken) fillFieldMap() {
 	j.fieldMap = make(map[string]field.Expr, 8)
 	j.fieldMap["id"] = j.ID
 	j.fieldMap["token_group"] = j.TokenGroup
-	j.fieldMap["random_account_id"] = j.RandomAccountID
+	j.fieldMap["account_id"] = j.AccountID
 	j.fieldMap["make_token_ip"] = j.MakeTokenIP
 	j.fieldMap["created_at"] = j.CreatedAt
 	j.fieldMap["last_refresh_at"] = j.LastRefreshAt
