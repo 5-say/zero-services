@@ -3,6 +3,7 @@
 .PHONY: rpc
 
 run:
+	TZ='Asia/Shanghai'; export TZ
 	cd rpc && go run jwtx.go
 
 dao:

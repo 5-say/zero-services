@@ -5,6 +5,10 @@ Etcd:
     - etcd:2379
   Key: jwtx.rpc
 
+Log:
+  Encoding: plain
+  TimeFormat: "2006-01-02 15:04:05 MST -07"
+
 DB:
   Host: mysql
   Port: 3306

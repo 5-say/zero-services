@@ -2,7 +2,6 @@ package jwtx
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/5-say/go-tools/tools/ip"
@@ -11,12 +10,14 @@ import (
 	"github.com/zeromicro/go-zero/rest/httpx"
 )
 
-func RefreshTokenMiddleware(simpleRandomConfig random.SimpleRandomConfig, jwtxConfig JWTXConfig, jwtxRpc JwtxClient) rest.Middleware {
+func RefreshTokenMiddleware(
+	errHandler func(err error) error,
+	simpleRandomConfig random.SimpleRandomConfig,
+	jwtxConfig JWTXConfig,
+	jwtxRpc JwtxClient,
+) rest.Middleware {
 	return func(next http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
-
-			// 获取客户端 IP 地址
-			requestIP := ip.GetRequestIP(r)
 
 			// 校验 token（拓展校验、刷新 token）
 			resp, err := jwtxRpc.CheckToken(r.Context(), &CheckToken_Request{
@@ -24,16 +25,15 @@ func RefreshTokenMiddleware(simpleRandomConfig random.SimpleRandomConfig, jwtxCo
 				RefreshInterval: jwtxConfig.RefreshInterval,
 				FaultTolerance:  jwtxConfig.FaultTolerance,
 				CheckIP:         jwtxConfig.CheckIP,
-				RequestIP:       requestIP,
-				Tid:             r.Context().Value("tid").(uint64),
-				Iat:             r.Context().Value("iat").(int64),
-				Exp:             r.Context().Value("exp").(int64),
+				RequestIP:       ip.GetRequestIP(r),
+				RequestToken:    r.Header.Get("Authorization"),
 			})
 
 			if err != nil {
 
-				fmt.Println(err, resp) // 可以通过外部传参补充日志
-				httpx.ErrorCtx(r.Context(), w, err)
+				// fmt.Println(err, resp) // 可以通过外部传参补充日志
+
+				httpx.ErrorCtx(r.Context(), w, errHandler(err))
 
 			} else {
 
@@ -45,7 +45,6 @@ func RefreshTokenMiddleware(simpleRandomConfig random.SimpleRandomConfig, jwtxCo
 
 				// 附加上下文
 				ctx := r.Context()
-				ctx = context.WithValue(ctx, "requestIP", requestIP)
 				ctx = context.WithValue(ctx, "accountID", accountID)
 
 				// 继续执行

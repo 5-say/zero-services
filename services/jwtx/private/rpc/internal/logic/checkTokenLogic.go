@@ -8,8 +8,8 @@ import (
 	"github.com/5-say/zero-services/services/jwtx/private/db/dao"
 	"github.com/5-say/zero-services/services/jwtx/private/rpc/common"
 	"github.com/5-say/zero-services/services/jwtx/private/rpc/internal/svc"
-	"github.com/pkg/errors"
 
+	"github.com/5-say/go-tools/tools/t"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -29,20 +29,29 @@ func NewCheckTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CheckT
 
 // 校验 token
 func (l *CheckTokenLogic) CheckToken(in *jwtx.CheckToken_Request) (*jwtx.CheckToken_Response, error) {
+	// 解析 token 字符串
+	claims, err := common.ParseToken(in.RequestToken+"7", []byte(in.AccessSecret))
+	if err != nil {
+		return nil, t.RPCError(err.Error(), "parse fail")
+	}
+	iat := int64(claims["iat"].(float64))
+	exp := int64(claims["exp"].(float64))
+	tid := uint64(claims["tid"].(float64))
+
 	// 初始化数据库
 	q := dao.Common()
 
 	// 查找 token
 	m := q.JwtxToken
-	token, err := m.Where(m.ID.Eq(in.Tid)).First()
+	token, err := m.Where(m.ID.Eq(tid)).First()
 	if err != nil {
-		return nil, err
+		return nil, t.RPCError(err.Error(), "not found")
 	}
 
 	// IP 一致性校验
 	if in.CheckIP {
 		if in.RequestIP != token.MakeTokenIP {
-			return nil, errors.New("check ip fail")
+			return nil, t.RPCError("", "ip fail")
 		}
 	}
 
@@ -51,15 +60,15 @@ func (l *CheckTokenLogic) CheckToken(in *jwtx.CheckToken_Request) (*jwtx.CheckTo
 		newToken = ""
 		now      = time.Now()
 	)
-	if in.Iat == token.FinalRefreshAt.Unix() { // token 未刷新
+	if iat == token.FinalRefreshAt.Unix() { // token 未刷新
 
 		// 需要刷新 token
-		if in.Iat+in.RefreshInterval > now.Unix() {
+		if iat+in.RefreshInterval > now.Unix() {
 
 			// 构造 token 字符串（过期时间不变，签发时间顺延）
-			newToken, err = common.MakeTokenStr(in.AccessSecret, now.Unix(), in.Exp, token.ID)
+			newToken, err = common.MakeTokenStr(in.AccessSecret, now.Unix(), exp, token.ID)
 			if err != nil {
-				return nil, err
+				return nil, t.RPCError(err.Error(), "make fail")
 			}
 
 			// 更新数据库
@@ -68,7 +77,7 @@ func (l *CheckTokenLogic) CheckToken(in *jwtx.CheckToken_Request) (*jwtx.CheckTo
 				m.FinalRefreshAt.Value(now),
 			)
 			if err != nil {
-				return nil, err
+				return nil, t.RPCError(err.Error(), "refresh fail")
 			}
 		}
 
@@ -78,7 +87,7 @@ func (l *CheckTokenLogic) CheckToken(in *jwtx.CheckToken_Request) (*jwtx.CheckTo
 			RandomAccountID: token.RandomAccountID,
 		}, nil
 
-	} else if in.Iat == token.LastRefreshAt.Unix() { // token 已刷新
+	} else if iat == token.LastRefreshAt.Unix() { // token 已刷新
 
 		// 当前时间 未超出 并发容错时间（允许继续使用）
 		if now.Unix() < token.FinalRefreshAt.Unix()+in.FaultTolerance {
@@ -90,5 +99,5 @@ func (l *CheckTokenLogic) CheckToken(in *jwtx.CheckToken_Request) (*jwtx.CheckTo
 		}
 	}
 
-	return nil, errors.New("token refreshed")
+	return nil, t.RPCError("", "token refreshed")
 }

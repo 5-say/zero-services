@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/5-say/go-tools/tools/t"
 	"github.com/5-say/zero-services/services/jwtx"
 	"github.com/5-say/zero-services/services/jwtx/private/db/dao"
 	"github.com/5-say/zero-services/services/jwtx/private/db/dao/model"
@@ -38,7 +39,7 @@ func (l *MakeTokenLogic) MakeToken(in *jwtx.MakeToken_Request) (*jwtx.MakeToken_
 		m.TokenGroup.Eq(in.Group),
 		m.RandomAccountID.Eq(in.RandomAccountID),
 	).Delete(); err != nil {
-		return nil, err
+		return nil, t.RPCError(err.Error(), "clear fail")
 	}
 
 	// 创建新 token
@@ -53,13 +54,16 @@ func (l *MakeTokenLogic) MakeToken(in *jwtx.MakeToken_Request) (*jwtx.MakeToken_
 		ExpirationAt:    now.Add(time.Duration(in.AccessExpire) * time.Second),
 	}
 	if err := q.JwtxToken.Create(&token); err != nil {
-		return nil, err
+		return nil, t.RPCError(err.Error(), "create fail")
 	}
 
 	// 构造 token 字符串
 	tokenStr, err := common.MakeTokenStr(in.AccessSecret, now.Unix(), now.Unix()+in.AccessExpire, token.ID)
+	if err != nil {
+		return nil, t.RPCError(err.Error(), "make fail")
+	}
 
 	return &jwtx.MakeToken_Response{
 		Token: tokenStr,
-	}, err
+	}, nil
 }
