@@ -46,7 +46,7 @@ func RefreshTokenMiddleware(
 
 				// 附加上下文
 				ctx := r.Context()
-				ctx = context.WithValue(ctx, "accountID", accountID)
+				ctx = context.WithValue(ctx, "accountID", uint64(accountID))
 				ctx = context.WithValue(ctx, "tokenID", resp.TokenID)
 
 				// 继续执行

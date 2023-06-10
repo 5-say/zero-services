@@ -33,6 +33,9 @@ func (l *DeleteTokenLogic) DeleteToken(in *jwtx.DeleteToken_Request) (*jwtx.Dele
 	// 移除 token
 	m := q.JwtxToken
 	_, err := m.Where(m.ID.Eq(in.TokenID)).Delete()
+	if err != nil {
+		return nil, t.RPCError(err.Error(), "delete fail")
+	}
 
-	return &jwtx.DeleteToken_Response{}, t.RPCError(err.Error(), "delete fail")
+	return &jwtx.DeleteToken_Response{}, nil
 }
