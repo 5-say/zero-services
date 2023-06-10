@@ -88,6 +88,7 @@ func (l *CheckTokenLogic) CheckToken(in *jwtx.CheckToken_Request) (*jwtx.CheckTo
 
 		// 验证通过
 		return &jwtx.CheckToken_Response{
+			TokenID:         token.ID,
 			NewToken:        newToken,
 			RandomAccountID: randomAccountID,
 		}, nil
@@ -98,6 +99,7 @@ func (l *CheckTokenLogic) CheckToken(in *jwtx.CheckToken_Request) (*jwtx.CheckTo
 		if now.Unix() < token.FinalRefreshAt.Unix()+in.FaultTolerance {
 			// 验证通过
 			return &jwtx.CheckToken_Response{
+				TokenID:         token.ID,
 				NewToken:        "",
 				RandomAccountID: randomAccountID,
 			}, nil

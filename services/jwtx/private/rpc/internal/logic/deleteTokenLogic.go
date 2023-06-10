@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"github.com/5-say/go-tools/tools/t"
 	"github.com/5-say/zero-services/services/jwtx"
 	"github.com/5-say/zero-services/services/jwtx/private/db/dao"
 	"github.com/5-say/zero-services/services/jwtx/private/rpc/internal/svc"
@@ -31,7 +32,7 @@ func (l *DeleteTokenLogic) DeleteToken(in *jwtx.DeleteToken_Request) (*jwtx.Dele
 
 	// 移除 token
 	m := q.JwtxToken
-	_, err := m.Where(m.ID.Eq(in.Tid)).Delete()
+	_, err := m.Where(m.ID.Eq(in.TokenID)).Delete()
 
-	return &jwtx.DeleteToken_Response{}, err
+	return &jwtx.DeleteToken_Response{}, t.RPCError(err.Error(), "delete fail")
 }

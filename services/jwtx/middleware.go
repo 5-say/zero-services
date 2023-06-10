@@ -2,7 +2,6 @@ package jwtx
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/5-say/go-tools/tools/ip"
@@ -32,12 +31,12 @@ func RefreshTokenMiddleware(
 
 			if err != nil {
 
-				// fmt.Println(err, resp) // 可以通过外部传参补充日志
-
-				httpx.ErrorCtx(r.Context(), w, errHandler(err))
+				// 通过外部回调 加工错误对象、记录错误日志
+				appErr := errHandler(err)
+				// 为响应对象写入错误信息
+				httpx.ErrorCtx(r.Context(), w, appErr)
 
 			} else {
-				fmt.Println("- - - - - - - - - ", resp) // 可以通过外部传参补充日志
 
 				// 响应头填充刷新后的 token
 				w.Header().Add("NEW-TOKEN", resp.NewToken)
@@ -48,6 +47,7 @@ func RefreshTokenMiddleware(
 				// 附加上下文
 				ctx := r.Context()
 				ctx = context.WithValue(ctx, "accountID", accountID)
+				ctx = context.WithValue(ctx, "tokenID", resp.TokenID)
 
 				// 继续执行
 				next(w, r.WithContext(ctx))

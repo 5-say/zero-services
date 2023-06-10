@@ -41,14 +41,15 @@ message CheckToken_Request {
 }
 // - 响应
 message CheckToken_Response {
-  string newToken        = 1;
-  string randomAccountID = 2; // 加密的账户 ID
+  uint64 tokenID         = 1; // token ID
+  string newToken        = 2; // 刷新后的 token
+  string randomAccountID = 3; // 加密的账户 ID
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 移除 token（安全退出）
 // - 请求
 message DeleteToken_Request {
-  uint64 tid = 1; // token ID
+  uint64 tokenID = 1; // token ID
 }
 // - 响应
 message DeleteToken_Response {}
