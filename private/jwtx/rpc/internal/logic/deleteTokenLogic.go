@@ -4,9 +4,9 @@ import (
 	"context"
 
 	"github.com/5-say/go-tools/tools/t"
-	"github.com/5-say/zero-services/services/jwtx"
-	"github.com/5-say/zero-services/services/jwtx/private/db/dao"
-	"github.com/5-say/zero-services/services/jwtx/private/rpc/internal/svc"
+	"github.com/5-say/zero-services/private/jwtx/db/dao"
+	"github.com/5-say/zero-services/private/jwtx/rpc/internal/svc"
+	"github.com/5-say/zero-services/public/jwtx"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )

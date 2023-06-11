@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package permission;
+option go_package="./permission";
+
+service permission {
+}
+

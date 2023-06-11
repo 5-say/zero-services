@@ -2,7 +2,7 @@ package dao
 
 import (
 	"github.com/5-say/go-tools/tools/db"
-	"github.com/5-say/zero-services/services/jwtx/private/db/dao/query"
+	"github.com/5-say/zero-services/private/jwtx/db/dao/query"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"gorm.io/gorm/logger"
