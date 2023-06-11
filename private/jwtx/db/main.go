@@ -13,7 +13,7 @@ type Config struct {
 	DB db.Config
 }
 
-var configFile = flag.String("f", "../rpc/etc/jwtx.yaml", "the config file")
+var configFile = flag.String("f", "../rpc/etc/config.yaml", "the config file")
 
 // Dynamic SQL
 type Querier interface {
@@ -22,6 +22,8 @@ type Querier interface {
 }
 
 func main() {
+	flag.Parse()
+
 	g := gen.NewGenerator(gen.Config{
 		OutPath: "./dao/query",
 		Mode:    gen.WithoutContext | gen.WithDefaultQuery | gen.WithQueryInterface, // generate mode

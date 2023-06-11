@@ -6,9 +6,9 @@ package server
 import (
 	"context"
 
-	"github.com/5-say/zero-services/public/jwtx"
 	"github.com/5-say/zero-services/private/jwtx/rpc/internal/logic"
 	"github.com/5-say/zero-services/private/jwtx/rpc/internal/svc"
+	"github.com/5-say/zero-services/public/jwtx"
 )
 
 type JwtxServer struct {

@@ -22,4 +22,4 @@ jwtx-rpc:
 
 jd:jwtx-dao
 jwtx-dao:
-	cd private/jwtx/db && go run .
+	cd private/jwtx/db && go run main.go -f ../rpc/etc/jwtx.yaml
