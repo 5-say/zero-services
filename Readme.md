@@ -4,15 +4,18 @@
 
 > 封装独立于业务的 rpc 服务
 
+## 使用方法
+
+- 请参考演示项目[zero-vue-demo/api-center](https://github.com/zero-vue-demo/api-center)
+
 ## 开发流程
 
-在主项目中执行以下命令
-
 ```sh
+# 在主项目中执行以下命令
 cd work
 git clone git@github.com:5-say/zero-services.git
 cd ..
-go work init ./work/zero-services
+go work use ./work/zero-services
 code ./work/zero-services
 ```
 
