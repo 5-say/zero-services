@@ -1,6 +1,7 @@
 
 help:
 	@echo ""
+	@echo "make i   |  make init      :  初始化项目"
 	@echo "------------------------------------------------"
 	@echo "make j   |  make jwtx-run  :  运行 jwtx     服务"
 	@echo "make jr  |  make jwtx-rpc  :  生成 jwtx rpc 文件"
@@ -10,6 +11,10 @@ help:
 
 run:
 	make help
+
+i:init
+init:
+	cd private/jwtx/rpc/etc && [ -f jwtx.yaml ] || cp example.jwtx.yaml jwtx.yaml
 
 j:jwtx-run
 jwtx-run:
